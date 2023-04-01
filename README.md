@@ -7,7 +7,7 @@ Que por medio de los datos de frecuencia cardiaca se puede detectar fatiga duran
 
 ### ¿Qué aprendió en este primer prototipo?
 
-Que sí existe una diferencia cuando se está despierto y cuando se está dormido, pero no es tan marcada como se esperaba.
+Que sí existe una diferencia cuando se está despierto y cuando se está dormido, pero no es tan marcada como se esperaba. De igual manera estos son datos necesitan ser procesados para quitar los outliers, normalizarlos y estandarizarlos para conocer mejor las diferencias entre las distintas fases de actividad. Tampoco hay que quedarse con estos datos ya que sabemos que luego nosotros obtendremos nuestros propios datos a partir del sensor de frecuencia cardiaca.
 
 ### ¿Cuáles serán los pasos para un siguiente prototipo?
 
