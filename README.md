@@ -16,3 +16,6 @@ Obtener estos datos de un sensor de frecuencia cardiaca.
 ### ¿Se necesita hacer algún cambio en el protocolo, derivado del aprendizaje en este prototipo?
 
 En realidad no, ya se esperaba que sí existiera una diferencia entre los datos de frecuencia cardiaca cuando se está despierto y cuando se está dormido. Tal vez en fases más adelante cuando ya se implemente el modelo será necesario especificar en el protocolo qué tipo de modelo de aprendizaje se utilizará.
+
+command to run in raspberry pi:
+```python3 miband4_console.py -m F3:C5:B7:EA:FA:FA```
