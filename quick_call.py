@@ -13,4 +13,3 @@ while True :
     except BTLEDisconnectError:
         print('connection to the MIBand failed. Trying out again')
         continue
-
