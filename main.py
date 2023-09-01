@@ -118,5 +118,4 @@ if __name__ == "__main__":
             exit()
         
     general_info()
-    get_heart_rate()
     get_realtime()
