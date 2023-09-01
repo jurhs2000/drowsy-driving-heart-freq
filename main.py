@@ -118,7 +118,5 @@ if __name__ == "__main__":
             exit()
         
     general_info()
-    #get_heart_rate()
-    #get_realtime()
-    # set alarm to the next minute
-    band.setAlarm(11, 18)
+    get_heart_rate()
+    get_realtime()

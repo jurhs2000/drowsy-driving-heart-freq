@@ -600,6 +600,42 @@ class miband(Peripheral):
         endpoint = b'\x06'
         char.write(endpoint + bytes(cmd))
 
+    def setTrack(self, state, artist=None, album=None, track=None,
+                 volume=None,
+                 position=None, duration=None):
+        self.pp_state = state
+        self.artist = artist
+        self.album = album
+        self.track = track
+        self.position = position
+        self.duration = duration
+        self.volume = volume
+        self.setMusic()
+
+    def setMusicCallback(self,play=None,pause=None,forward=None,backward=None,volumeup=None,volumedown=None,focusin=None,focusout=None):
+        if play is not None:
+            self._default_music_play = play
+        if pause is not None:
+            self._default_music_pause = pause
+        if forward is not None:
+            self._default_music_forward = forward
+        if backward is not None:
+            self._default_music_back = backward
+        if volumedown is not None:
+            self._default_music_vdown = volumedown
+        if volumeup is not None:
+            self._default_music_vup = volumeup
+        if focusin is not None:
+            self._default_music_focus_in = focusin
+        if focusout is not None:
+            self._default_music_focus_out = focusout
+
+    def setLostDeviceCallback(self, lost=None, found=None):
+        if lost is not None:
+            self._default_lost_device = lost
+        if found is not None:
+            self._default_found_device = found
+
     def setAlarm(self, hour, minute, days=(), enabled=True, snooze=True,
                  alarm_id=0):
         '''Set an alarm at HOUR and MINUTE, on DAYS days.  Up to 3 alarms can be set.
@@ -620,3 +656,36 @@ class miband(Peripheral):
         packet = struct.pack("5B", 2, alarm_tag, hour, minute, repetition_mask)
         val = char.write(packet)
         return val
+
+    def setMusic(self):
+        flag = 0x00
+        flag |= 0x01
+
+        buf = b''
+        null = b'\x00'
+        if self.artist is not None:
+            flag |= 0x02
+            buf += self.artist.encode('utf-8') + null
+        if self.album is not None:
+            flag |= 0x04
+            buf += self.album.encode('utf-8') + null
+        if self.track is not None:
+            flag |= 0x08
+            buf += self.track.encode('utf-8') + null
+        if self.duration is not None:
+            flag |= 0x10
+            val = struct.pack('<H', self.duration)
+            buf += val
+        if self.volume is not None:
+            # volume goes from 0 to 100
+            flag |= 0x40
+            val = bytes([self.volume])
+            buf += val + null
+
+        if self.position is not None:
+            position = struct.pack('<H', self.position)
+        else:
+            position = null + null
+
+        buf = bytes([flag, self.pp_state, 0x00]) + position + buf
+        self.writeChunked(3, buf)
