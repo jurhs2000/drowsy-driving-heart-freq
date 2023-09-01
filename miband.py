@@ -6,6 +6,7 @@ import struct
 from datetime import datetime, timedelta
 from Crypto.Cipher import AES
 from datetime import datetime
+from model import HRModel
 try:
     import zlib
 except ImportError:
@@ -143,7 +144,7 @@ class miband(Peripheral):
         log_level = logging.WARNING if not debug else logging.DEBUG
         self._log = logging.getLogger(self.__class__.__name__)
         self._log.setLevel(log_level)
-
+        self.model = HRModel()
 
         self._log.info('Connecting to ' + mac_address)
         Peripheral.__init__(self, mac_address, addrType=ADDR_TYPE_PUBLIC)
@@ -288,6 +289,7 @@ class miband(Peripheral):
                     self.heart_measure_callback(struct.unpack('bb', res[1])[1])
                     print('AAAAAA: ', struct.unpack('bb', res[1])[1])
                     print('type: ', type(struct.unpack('bb', res[1])[1]))
+                    self.model.add_row(datetime.now(), struct.unpack('bb', res[1])[1])
                 elif self.heart_raw_callback and _type == QUEUE_TYPES.RAW_HEART:
                     self.heart_raw_callback(self._parse_raw_heart(res[1]))
                 elif self.accel_raw_callback and _type == QUEUE_TYPES.RAW_ACCEL:
