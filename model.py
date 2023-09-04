@@ -28,7 +28,7 @@ class HRModel():
     # create the RNN model
     def create_model(self):
         self.model = keras.Sequential([
-            keras.layers.LSTM(64, input_shape=(self.sequence_lenght, 2)),
+            keras.layers.LSTM(64, input_shape=(self.sequence_length, 2)),
             keras.layers.Dense(1, activation='sigmoid')
         ])
         # compile the model
