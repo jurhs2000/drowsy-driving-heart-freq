@@ -287,8 +287,6 @@ class miband(Peripheral):
                 _type = res[0]
                 if self.heart_measure_callback and _type == QUEUE_TYPES.HEART:
                     self.heart_measure_callback(struct.unpack('bb', res[1])[1])
-                    print('AAAAAA: ', struct.unpack('bb', res[1])[1])
-                    print('type: ', type(struct.unpack('bb', res[1])[1]))
                     self.model.add_row(datetime.now(), struct.unpack('bb', res[1])[1])
                 elif self.heart_raw_callback and _type == QUEUE_TYPES.RAW_HEART:
                     self.heart_raw_callback(self._parse_raw_heart(res[1]))
