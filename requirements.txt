@@ -3,7 +3,7 @@ pycrypto
 curses-menu
 crc16
 pandas
-tensorflow
+tensorflow==1.14.0
 numpy
 protobuf==3.20.0
 scikit-learn
