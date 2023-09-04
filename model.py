@@ -10,6 +10,8 @@ class HRModel():
         # pandas dataframe to store the data
         self.df = pd.DataFrame(columns=['timestamp', 'heart_rate'])
         self.df.set_index('timestamp', inplace=True)
+        self.create_model()
+        self.train_model()
         
     # add a new row to the dataframe
     def add_row(self, timestamp, heart_rate):
