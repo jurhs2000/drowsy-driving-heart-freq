@@ -18,7 +18,7 @@ class HRModel():
     def add_row(self, timestamp, heart_rate):
         self.df.loc[timestamp] = heart_rate
         self.save_to_csv('heart_rate.csv')
-        self.predict()
+        #self.predict()
 
     # save the dataframe to a csv file or update the csv file
     # don't delete the old data in the csv file
