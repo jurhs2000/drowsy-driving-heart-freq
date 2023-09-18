@@ -33,7 +33,7 @@ class HRModel():
         self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
     
     # prepare sequences from data
-    def prepare_sequences(data, sequence_length):
+    def prepare_sequences(self, data, sequence_length):
         sequences = []
         labels = []
         for i in range(len(data) - sequence_length):
