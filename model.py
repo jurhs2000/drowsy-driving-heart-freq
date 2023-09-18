@@ -11,8 +11,8 @@ class HRModel():
         self.df = pd.DataFrame(columns=['timestamp', 'heart_rate'])
         self.df.set_index('timestamp', inplace=True)
         self.sequence_length = 10
-        #self.create_model()
-        #self.train_model()
+        self.create_model()
+        self.train_model()
         
     # add a new row to the dataframe
     def add_row(self, timestamp, heart_rate):
@@ -55,6 +55,7 @@ class HRModel():
             'heartrate': np.random.randint(60, 100, size=100),
             'drowsy': np.random.randint(0, 2, size=100)
         }
+        print(data)
         df = pd.DataFrame(data)
         # Split the DataFrame into features (X) and labels (y)
         X = df[['timestamp', 'heartrate']].values
