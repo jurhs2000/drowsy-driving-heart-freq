@@ -30,7 +30,8 @@ class HRModel():
         self.model = keras.Sequential([
             tf.keras.layers.Dense(units=1)
         ])
-        self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        #self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        self.model.compile(loss=tf.losses.MeanSquaredError(), optimizer=tf.optimizers.Adam(), metrics=[tf.metrics.MeanAbsoluteError()])
     
     # prepare sequences from data
     def prepare_sequences(self, data, sequence_length):
@@ -63,7 +64,8 @@ class HRModel():
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
         X_train_seq, y_train_seq = self.prepare_sequences(X_train, self.sequence_length)
         X_test_seq, y_test_seq = self.prepare_sequences(X_test, self.sequence_length)
-        self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1, use_multiprocessing=False)
+        #self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1, use_multiprocessing=False)
+        self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1)
         test_loss, test_accuracy = self.model.evaluate(X_test_seq, y_test_seq)
         print(f"Test loss: {test_loss}, test accuracy: {test_accuracy}")
 
