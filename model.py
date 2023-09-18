@@ -28,10 +28,11 @@ class HRModel():
     # create the RNN model
     def create_model(self):
         self.model = keras.Sequential([
-            tf.keras.layers.Dense(units=1)
+            tf.keras.layers.LSTM(64, input_shape=(self.sequence_length, 2)),
+            tf.keras.layers.Dense(1, activation='sigmoid')
         ])
-        #self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
-        self.model.compile(loss=tf.losses.MeanSquaredError(), optimizer=tf.optimizers.Adam(), metrics=[tf.metrics.MeanAbsoluteError()])
+        self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        #self.model.compile(loss=tf.losses.MeanSquaredError(), optimizer=tf.optimizers.Adam(), metrics=[tf.metrics.MeanAbsoluteError()])
     
     # prepare sequences from data
     def prepare_sequences(self, data, sequence_length):
