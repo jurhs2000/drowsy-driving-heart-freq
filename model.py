@@ -52,20 +52,20 @@ class HRModel():
             'drowsy': np.random.randint(0, 2, size=100)
         }
         print(data)
-        # df = pd.DataFrame(data)
-        # # Split the DataFrame into features (X) and labels (y)
-        # X = df[['timestamp', 'heartrate']].values
-        # y = df['drowsy'].values
-        # # Normalize the features (heart rate)
-        # self.scaler = StandardScaler()
-        # X[:, 1] = self.scaler.fit_transform(X[:, 1].reshape(-1, 1)).flatten()
-        # # Split the data into training and testing sets
-        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        # X_train_seq, y_train_seq = self.prepare_sequences(X_train, self.sequence_length)
-        # X_test_seq, y_test_seq = self.prepare_sequences(X_test, self.sequence_length)
-        # self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1)
-        # test_loss, test_accuracy = self.model.evaluate(X_test_seq, y_test_seq)
-        # print(f"Test loss: {test_loss}, test accuracy: {test_accuracy}")
+        df = pd.DataFrame(data)
+        # Split the DataFrame into features (X) and labels (y)
+        X = df[['timestamp', 'heartrate']].values
+        y = df['drowsy'].values
+        # Normalize the features (heart rate)
+        self.scaler = StandardScaler()
+        X[:, 1] = self.scaler.fit_transform(X[:, 1].reshape(-1, 1)).flatten()
+        # Split the data into training and testing sets
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        X_train_seq, y_train_seq = self.prepare_sequences(X_train, self.sequence_length)
+        X_test_seq, y_test_seq = self.prepare_sequences(X_test, self.sequence_length)
+        self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1)
+        test_loss, test_accuracy = self.model.evaluate(X_test_seq, y_test_seq)
+        print(f"Test loss: {test_loss}, test accuracy: {test_accuracy}")
 
     def predict(self):
         # predict the drowsiness
