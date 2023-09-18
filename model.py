@@ -30,6 +30,7 @@ class HRModel():
         self.model = keras.Sequential([
             tf.keras.layers.Dense(units=1)
         ])
+        self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
     
     # prepare sequences from data
     def prepare_sequences(data, sequence_length):
