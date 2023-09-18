@@ -28,16 +28,6 @@ class HRModel():
     # create the RNN model
     def create_model(self):
         self.model = keras.Sequential()
-        self.model.add(keras.layers.LSTM(128, input_shape=(self.sequence_length, 2), return_sequences=True))
-        self.model.add(keras.layers.Dropout(0.2))
-        self.model.add(keras.layers.LSTM(128, return_sequences=True))
-        self.model.add(keras.layers.Dropout(0.2))
-        self.model.add(keras.layers.LSTM(128))
-        self.model.add(keras.layers.Dropout(0.2))
-        self.model.add(keras.layers.Dense(32, activation='relu'))
-        self.model.add(keras.layers.Dropout(0.2))
-        self.model.add(keras.layers.Dense(2, activation='softmax'))
-        self.model.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     
     # prepare sequences from data
     def prepare_sequences(data, sequence_length):
