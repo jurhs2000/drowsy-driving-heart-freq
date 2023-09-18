@@ -11,7 +11,7 @@ class HRModel():
         self.df = pd.DataFrame(columns=['timestamp', 'heart_rate'])
         self.df.set_index('timestamp', inplace=True)
         self.sequence_length = 10
-        #self.create_model()
+        self.create_model()
         self.train_model()
         
     # add a new row to the dataframe
