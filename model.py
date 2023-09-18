@@ -27,8 +27,9 @@ class HRModel():
 
     # create the RNN model
     def create_model(self):
-        self.model = keras.Sequential()
-        self.model.add(keras.layers.LSTM(128, input_shape=(self.sequence_length, 2), return_sequences=True))
+        self.model = keras.Sequential([
+            tf.keras.layers.Dense(units=1)
+        ])
     
     # prepare sequences from data
     def prepare_sequences(data, sequence_length):
