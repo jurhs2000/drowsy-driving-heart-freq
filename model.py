@@ -12,7 +12,7 @@ class HRModel():
         self.df.set_index('timestamp', inplace=True)
         self.sequence_length = 10
         self.create_model()
-        self.train_model()
+        #self.train_model()
         
     # add a new row to the dataframe
     def add_row(self, timestamp, heart_rate):
@@ -67,8 +67,8 @@ class HRModel():
         X_test_seq, y_test_seq = self.prepare_sequences(X_test, self.sequence_length)
         #self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1, use_multiprocessing=False)
         #self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1)
-        test_loss, test_accuracy = self.model.evaluate(X_test_seq, y_test_seq)
-        print(f"Test loss: {test_loss}, test accuracy: {test_accuracy}")
+        #test_loss, test_accuracy = self.model.evaluate(X_test_seq, y_test_seq)
+        #print(f"Test loss: {test_loss}, test accuracy: {test_accuracy}")
 
     def predict(self):
         # predict the drowsiness
