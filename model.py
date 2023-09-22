@@ -4,6 +4,8 @@ from tensorflow import keras
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from keras.models import Sequential
+from keras.layers import SimpleRNN, Dense
 
 class HRModel():
     def __init__(self):
@@ -11,7 +13,7 @@ class HRModel():
         self.df = pd.DataFrame(columns=['timestamp', 'heart_rate'])
         self.df.set_index('timestamp', inplace=True)
         self.sequence_length = 10
-        #self.create_model()
+        self.create_model()
         #self.train_model()
         
     # add a new row to the dataframe
@@ -27,11 +29,11 @@ class HRModel():
 
     # create the RNN model
     def create_model(self):
-        self.model = keras.Sequential([
-            tf.keras.layers.LSTM(64, input_shape=(self.sequence_length, 2)),
-            tf.keras.layers.Dense(1, activation='sigmoid')
-        ])
-        self.model.compile(optimizer='adam', loss='mean_squared_error', metrics=['accuracy'])
+        self.model = Sequential()
+        self.model.add(SimpleRNN(128, input_shape=(5, 10)))
+        self.model.add(Dense(1, activation='sigmoid'))
+        self.model.build()
+        self.model.summary()
         #self.model.compile(loss=tf.losses.MeanSquaredError(), optimizer=tf.optimizers.Adam(), metrics=[tf.metrics.MeanAbsoluteError()])
     
     # prepare sequences from data
