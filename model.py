@@ -66,7 +66,7 @@ class HRModel():
         X_train_seq, y_train_seq = self.prepare_sequences(X_train, self.sequence_length)
         X_test_seq, y_test_seq = self.prepare_sequences(X_test, self.sequence_length)
         #self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1, use_multiprocessing=False)
-        self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1)
+        #self.model.fit(X_train_seq, y_train_seq, epochs=10, batch_size=32, validation_split=0.1)
         test_loss, test_accuracy = self.model.evaluate(X_test_seq, y_test_seq)
         print(f"Test loss: {test_loss}, test accuracy: {test_accuracy}")
 
