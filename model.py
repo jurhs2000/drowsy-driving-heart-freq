@@ -5,7 +5,7 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from keras.models import Sequential
-from keras.layers import SimpleRNN, Dense
+from keras.layers import SimpleRNN, Dense, LSTM
 
 class HRModel():
     def __init__(self):
@@ -30,8 +30,8 @@ class HRModel():
     # create the RNN model
     def create_model(self):
         self.model = Sequential()
-        self.model.add(SimpleRNN(128, input_shape=(5, 10)))
-        self.model.add(Dense(1, activation='sigmoid'))
+        self.model.add(LSTM(128, input_shape=(5, 10)))
+        self.model.add(Dense(1))
         self.model.build()
         self.model.summary()
         #self.model.compile(loss=tf.losses.MeanSquaredError(), optimizer=tf.optimizers.Adam(), metrics=[tf.metrics.MeanAbsoluteError()])
