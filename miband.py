@@ -3,10 +3,11 @@ import logging
 from bluepy.btle import Peripheral, DefaultDelegate, ADDR_TYPE_RANDOM,ADDR_TYPE_PUBLIC, BTLEException
 from constants import UUIDS, AUTH_STATES, ALERT_TYPES, QUEUE_TYPES, MUSICSTATE
 import struct
+import socket
+import json
 from datetime import datetime, timedelta
 from Crypto.Cipher import AES
 from datetime import datetime
-from model import HRModel
 try:
     import zlib
 except ImportError:
@@ -144,8 +145,13 @@ class miband(Peripheral):
         log_level = logging.WARNING if not debug else logging.DEBUG
         self._log = logging.getLogger(self.__class__.__name__)
         self._log.setLevel(log_level)
-        self.model = HRModel()
-
+        # Create a socket object
+        self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Define the server's address and port
+        host = '192.168.1.11'
+        port = 2222
+        # Connect to the server
+        self.client_socket.connect((host, port))
         self._log.info('Connecting to ' + mac_address)
         Peripheral.__init__(self, mac_address, addrType=ADDR_TYPE_PUBLIC)
         self._log.info('Connected')
@@ -287,7 +293,12 @@ class miband(Peripheral):
                 _type = res[0]
                 if self.heart_measure_callback and _type == QUEUE_TYPES.HEART:
                     self.heart_measure_callback(struct.unpack('bb', res[1])[1])
-                    self.model.add_row(datetime.now(), struct.unpack('bb', res[1])[1])
+                    sensor_data = {
+                        "dateTime": datetime.now(),
+                        "bpm": struct.unpack('bb', res[1])[1]
+                    }
+                    json_string = json.dumps(sensor_data)
+                    self.client_socket.send(json_string.encode('utf-8'))
                 elif self.heart_raw_callback and _type == QUEUE_TYPES.RAW_HEART:
                     self.heart_raw_callback(self._parse_raw_heart(res[1]))
                 elif self.accel_raw_callback and _type == QUEUE_TYPES.RAW_ACCEL:
@@ -426,7 +437,6 @@ class miband(Peripheral):
         svc = self.getServiceByUUID(UUIDS.SERVICE_ALERT)
         char = svc.getCharacteristics(UUIDS.CHARACTERISTIC_ALERT)[0]
         char.write(_type)
-
 
     def set_current_time(self, date):
         char = self.svc_1.getCharacteristics(UUIDS.CHARACTERISTIC_CURRENT_TIME)[0]

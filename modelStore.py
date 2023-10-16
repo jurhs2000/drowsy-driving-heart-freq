@@ -9,6 +9,9 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(3, activation='softmax')  # Assuming 3 event classes
 ])
 
+model.build()
+model.summary()
+
 # Compile the model
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
@@ -36,6 +39,3 @@ print('Test accuracy: {:2.2f}%'.format(test_accuracy*100))
 
 # Save the model
 model.save('model.h5', save_format="h5")
-
-# Load the model
-model = tf.keras.models.load_model('model.h5')
