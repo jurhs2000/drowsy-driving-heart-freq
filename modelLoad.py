@@ -25,10 +25,12 @@ while True:
     # Receive JSON data from the client
     data = client_socket.recv(1024).decode('utf-8')
 
-    # Deserialize the JSON data
-    received_json = json.loads(data)
+    print(f"Received JSON data: {data}")
 
-    print(f"Received JSON object: {received_json}")
+    # Deserialize the JSON data
+    #received_json = json.loads(data)
+
+    #print(f"Received JSON object: {received_json}")
 
     # Close the client socket
     client_socket.close()

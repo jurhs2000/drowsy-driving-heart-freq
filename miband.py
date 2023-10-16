@@ -297,7 +297,7 @@ class miband(Peripheral):
                         "dateTime": datetime.now(),
                         "bpm": struct.unpack('bb', res[1])[1]
                     }
-                    json_string = json.dumps(sensor_data)
+                    json_string = json.dumps(sensor_data, indent=4, sort_keys=True, default=str)
                     self.client_socket.send(json_string.encode('utf-8'))
                 elif self.heart_raw_callback and _type == QUEUE_TYPES.RAW_HEART:
                     self.heart_raw_callback(self._parse_raw_heart(res[1]))
