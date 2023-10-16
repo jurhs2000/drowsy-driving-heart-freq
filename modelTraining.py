@@ -232,7 +232,7 @@ for person_data in participants_data:
             start_phase = pd.to_datetime(phase['dateTime'])
             end_phase = pd.to_datetime(phase['dateTime']) + pd.Timedelta(seconds=phase['seconds'])
             # create a new row for each hr_df row between the phae['dateTime'] and phase['dateTime'] + phase['seconds']
-            phase_hr = pd.DataFrame(columns=['logId', 'dateTime', 'bpm', 'level', 'age', 'sex', 'person'])
+            phase_hr = pd.DataFrame(columns=['participant', 'logId', 'dateTime', 'bpm', 'level', 'age', 'sex', 'person'])
             # if no values are found, skip this phase
             between_hr = hr_df[(hr_df['dateTime'] >= start_phase) & (hr_df['dateTime'] <= end_phase)]
             if len(between_hr) == 0:
