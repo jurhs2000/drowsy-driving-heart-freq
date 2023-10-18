@@ -6,7 +6,7 @@ import pandas as pd
 import json
 
 # Load the model
-model = tf.keras.models.load_model('model.h5')
+model = tf.keras.models.load_model('model.h5', compile=False)
 
 # Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -55,8 +55,8 @@ while True:
         }
         # Append the received dataframe to the main dataframe
         hr_sleep_df.loc[len(hr_sleep_df)] = new_row
-        #print(hr_sleep_df)
-        predictions = model.predict(hr_sleep_df.values.reshape(-1, 1, 7))
+        x_array = np.asarray(hr_sleep_df).astype(np.float32)
+        predictions = model.predict(x_array.reshape(-1, 1, 7))
         #print(predictions)
         predicted_class = tf.argmax(predictions, axis=-1).numpy()
         print(predicted_class)
