@@ -1,6 +1,6 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-#from pandas_profiling import ProfileReport
+import random
+from ydata_profiling import ProfileReport
 
 participants_data = [
     {
@@ -134,7 +134,7 @@ participants_data = [
 ]
 
 # dataframe to store the new heart rate + sleep data
-hr_sleep_df = pd.DataFrame(columns=['participant', 'logId', 'dateTime', 'bpm', 'level', 'age', 'sex', 'person']) # height, max heart rate
+hr_sleep_df = pd.DataFrame(columns=['participant', 'logId', 'phaseNo', 'hrNo', 'dateTime', 'bpm', 'level', 'age', 'sex', 'person']) # height, max heart rate
 
 for person_data in participants_data:
     print(f'Starting {person_data["participant"]}')
@@ -159,9 +159,9 @@ for person_data in participants_data:
 
     # generate sleep_df profile report
     #profile = ProfileReport(sleep_df, title='Sleep Profile Report', explorative=True)
-    #profile.to_file(f'data/pmdata/{participant}/fitbit/sleep_profile_report.html')
+    #profile.to_file(f'data/pmdata/{person_data["participant"]}/fitbit/sleep_profile_report.html')
 
-    # delete from sleep_df the columns logId, dateOfSleep, duration, minutesToFallAsleep, minutesAsleep, minutesAwake, minutesAfterWakeup, timeInBed, efficiency
+    # delete from sleep_df the columns dateOfSleep, duration, minutesToFallAsleep, minutesAsleep, minutesAwake, minutesAfterWakeup, timeInBed, efficiency
     sleep_df = sleep_df.drop(columns=['dateOfSleep', 'duration', 'minutesToFallAsleep', 'minutesAsleep', 'minutesAwake', 'minutesAfterWakeup', 'timeInBed', 'efficiency'])
 
     # remaining: logId, startTime, endTime, type, infoCode, levels, mainSleep
@@ -183,7 +183,7 @@ for person_data in participants_data:
             return 2
 
     # will consider the "sleep" phases of the cycles
-    check_sleep_level = False
+    check_sleep_level = True
     # will consider only the first cycle, until the first "asleep" or "deep" or "rem" phase
     check_only_first_cycle = True
     # specify which type of sleep phase to consider, "classic" or "stages" or "classic, stages"
@@ -192,6 +192,8 @@ for person_data in participants_data:
     check_only_infoCode_0 = True
     # specify if will check only main sleeps, those that are not main sleeps or both
     check_main_sleep = "both" # "main", "not main", "both"
+    # time to add before start of sleep (in seconds)
+    time_before_sleep = random.randint(1800, 10800)
 
     # iterate over the rows of sleep_df
     for index, row in sleep_df.iterrows():
@@ -209,7 +211,13 @@ for person_data in participants_data:
             elif check_main_sleep == "not main" and row['mainSleep'] == True:
                 continue
         first_cycle_complete = False
+        is_first_phase = True
+        phaseNo = 0
+        hrNoOffset = 0
         for phase in row['levels']['data']:
+            # if phase level is unknown, pass
+            if phase['level'] == 'unknown':
+                continue
             # only if check_only_first_cycle is True, check if the first cycle is complete
             if check_only_first_cycle == True:
                 # if the first cycle is complete, end the for loop
@@ -229,14 +237,19 @@ for person_data in participants_data:
                     else:
                         continue
             # convert to datetime
-            start_phase = pd.to_datetime(phase['dateTime'])
+            if is_first_phase == True:
+                is_first_phase = False
+                start_phase = pd.to_datetime(phase['dateTime']) - pd.Timedelta(seconds=time_before_sleep)
+            else:
+                start_phase = pd.to_datetime(phase['dateTime'])
             end_phase = pd.to_datetime(phase['dateTime']) + pd.Timedelta(seconds=phase['seconds'])
             # create a new row for each hr_df row between the phae['dateTime'] and phase['dateTime'] + phase['seconds']
-            phase_hr = pd.DataFrame(columns=['participant', 'logId', 'dateTime', 'bpm', 'level', 'age', 'sex', 'person'])
             # if no values are found, skip this phase
             between_hr = hr_df[(hr_df['dateTime'] >= start_phase) & (hr_df['dateTime'] <= end_phase)]
             if len(between_hr) == 0:
                 continue
+            phase_hr = pd.DataFrame(columns=['participant', 'logId', 'phaseNo', 'hrNo', 'dateTime', 'bpm', 'level', 'age', 'sex', 'person'])
+            # add the number of row on between_hr
             phase_hr.loc[:, 'dateTime'] = between_hr['dateTime']
             phase_hr.loc[:, 'bpm'] = between_hr['bpm']
             # add the new rows to the hr_sleep_df dataframe (use iloc)
@@ -246,9 +259,16 @@ for person_data in participants_data:
             phase_hr.loc[:, 'age'] = person_data["age"]
             phase_hr.loc[:, 'sex'] = person_data["sex"]
             phase_hr.loc[:, 'person'] = person_data["person"]
+            phase_hr.loc[:, 'phaseNo'] = phaseNo
+            phase_hr.loc[:, 'hrNo'] = range(hrNoOffset, hrNoOffset + len(between_hr))
+            hrNoOffset += len(between_hr)
             # concat the new rows to the hr_sleep_df dataframe
             hr_sleep_df = pd.concat([hr_sleep_df, phase_hr])
-    print(f'Finished {person_data["participant"]}')
+            phaseNo += 1
 
 # write the hr_sleep_df dataframe to a csv file
 hr_sleep_df.to_csv(f'data/pmdata/all_hr_sleep.csv', index=False)
+
+# generate sleep_df profile report
+profile = ProfileReport(hr_sleep_df, title='Heart Rate + Sleep Profile Report', explorative=True)
+profile.to_file(f'data/pmdata/hr_sleep_profile_report.html')
