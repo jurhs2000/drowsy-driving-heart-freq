@@ -33,11 +33,13 @@ scaler = StandardScaler()
 scaled_X = scaler.fit_transform(X)
 joblib.dump(scaler, f'data/processed{processed_no}/scaler.pkl')
 
+scaled_X = scaled_X.reshape(-1, 1, scaled_X.shape[1])
+
 X_train, X_test, y_train, y_test = train_test_split(scaled_X, Y, test_size=0.2, random_state=42)
 
 # Define the LSTM model with 5 layers: 1 perceptron layer, 3 LSTM layers, and 2 perceptron layers
 model = tf.keras.models.Sequential()
-model.add(tf.keras.layers.Dense(128, activation='relu', input_shape=(1, scaled_X.shape[1])))
+model.add(tf.keras.layers.Dense(128, activation='relu', input_shape=(1, X_train.shape[2])))
 model.add(tf.keras.layers.LSTM(128, activation='relu', return_sequences=True))
 model.add(tf.keras.layers.LSTM(128, activation='relu', return_sequences=True))
 model.add(tf.keras.layers.LSTM(128, activation='relu'))
@@ -52,7 +54,7 @@ model.summary()
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
 # Train the model
-model.fit(X_train, y_train, epochs=1, batch_size=32, validation_data=(X_test, y_test))
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
 
 # Evaluate the model
 test_loss, test_accuracy = model.evaluate(X_test, y_test)
@@ -69,6 +71,8 @@ y_test = validation_df[label]
 scaled_X = scaler.fit_transform(X)
 
 scaled_df = pd.DataFrame(scaled_X, columns=X.columns)
+
+scaled_df = scaled_df.values.reshape(-1, 1, scaled_df.shape[1])
 
 y_pred = model.predict(scaled_df)
 y_pred = np.argmax(y_pred, axis=1)
