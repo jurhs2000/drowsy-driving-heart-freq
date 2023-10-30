@@ -5,9 +5,9 @@ crc16
 autogluon
 pandas
 ydata_profiling
-tensorflow==1.14.0
+tensorflow
 numpy
-protobuf==3.20.0
+protobuf
 scikit-learn
 joblib
 matplotlib
