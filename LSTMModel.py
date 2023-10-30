@@ -11,8 +11,8 @@ import seaborn as sns
 # load df from data/pmdata/p01/fitbit/hr_sleep.csv
 df = None
 
-processed_no = int(input('¿Qué conjunto de datos desea utilizar para los modelos?: '))
-validation = int(input('¿Qué conjunto de datos desea utilizar para la validación (El resto será utilizado para entrenamiento y pruebas)?: '))
+processed_no = int(input('¿Qué conjunto de datos desea utilizar para el modelo LSTM?: '))
+validation = int(input('¿Qué conjunto de datos de participante desea utilizar para la validación (El resto será utilizado para entrenamiento y pruebas)?: '))
 
 for i in range(1, 17):
     if i == validation:
@@ -55,36 +55,6 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=
 
 # Train the model
 model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
-
-# Evaluate the model
-test_loss, test_accuracy = model.evaluate(X_test, y_test)
-# print the accuracy
-print('Test accuracy: {:2.2f}%'.format(test_accuracy*100))
-
-# confusion matrix
-# validation data
-validation_df = pd.read_csv(f'data/processed{processed_no}/data/all_hr_sleep_p{validation:02d}.csv')
-
-X = validation_df.drop(columns=[label])
-y_test = validation_df[label]
-
-scaled_X = scaler.fit_transform(X)
-
-scaled_df = pd.DataFrame(scaled_X, columns=X.columns)
-
-scaled_df = scaled_df.values.reshape(-1, 1, scaled_df.shape[1])
-
-y_pred = model.predict(scaled_df)
-y_pred = np.argmax(y_pred, axis=1)
-cm = confusion_matrix(y_test, y_pred)
-print(cm)
-plt.figure(figsize=(5, 5))
-sns.heatmap(cm, annot=True, fmt=".3f", linewidths=.5, square=True, cmap='Blues_r')
-plt.ylabel('Actual label')
-plt.xlabel('Predicted label')
-all_sample_title = 'Accuracy Score: {0}'.format(test_accuracy)
-plt.title(all_sample_title, size=15)
-plt.show()
 
 # Save the model
 model.save('model-LSTM.h5', save_format="h5")

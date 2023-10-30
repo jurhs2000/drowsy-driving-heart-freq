@@ -15,10 +15,22 @@ def is_valid_json(mystring):
         return False
     
 processed_no = int(input("Ingrese el número del dataset a usar: "))
+model_no = int(input("Ingrese el número del modelo a usar: "))
 
 # Load the model
-predictor = TabularPredictor.load(f'data/processed{processed_no}/AutogluonModels')
+predictor = TabularPredictor.load(f'data/processed{processed_no}/AutogluonModels/model{model_no}')
 loaded_scaler = joblib.load(f'data/processed{processed_no}/scaler.pkl')
+
+age = int(input("Ingrese la edad del participante: "))
+sex = int(input("Ingrese el sexo del participante (0 para hombre, 1 para mujer): "))
+height = int(input("Ingrese la altura del participante en centímetros: "))
+person = int(input("Ingrese el número del participante (0 para A, 1 para B): "))
+resting_hr = int(input("Ingrese la frecuencia cardíaca en reposo del participante: "))
+fatigue = int(input("Ingrese el nivel de fatiga del participante (1 - 5, siendo 3 medio, 1-2 bajo lo normal y 4-5 más alto lo normal): "))
+mood = int(input("Ingrese el nivel ánimo del participante (1 - 5, siendo 3 medio, 1-2 bajo lo normal y 4-5 más alto lo normal): "))
+sleep_duration_h = int(input("Ingrese cuántas horas durmió: "))
+sleep_quality = int(input("Ingrese la calidad del sueño del participante (1 - 5, siendo 3 medio, 1-2 bajo lo normal y 4-5 más alto lo normal): "))
+stress = int(input("Ingrese el nivel estrés del participante (1 - 5, siendo 3 medio, 1-2 bajo lo normal y 4-5 más alto lo normal): "))
 
 # Create a socket object
 server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -30,6 +42,8 @@ host = '0.0.0.0'
 port = 2222
 server_socket.bind((host, port))
 
+print(f"\nServer listening on port {port}")
+
 # Listen for incoming connections
 server_socket.listen(1)
 
@@ -38,19 +52,8 @@ client_socket, addr = server_socket.accept()
 print(f"Received connection from {addr}")
 
 # dataframe to store the heart rate data
-hr_sleep_df = pd.DataFrame(columns=['participant','logId','phaseNo','hrNo','secondsPassed','daySeconds','bpm','resting_hr','age','sex','person','fatigue','mood','sleep_duration_h','sleep_quality','stress'])
-hr_sleep_pred_df = pd.DataFrame(columns=['participant','logId','phaseNo','hrNo','secondsPassed','daySeconds','bpm','resting_hr','age','sex','person','fatigue','mood','sleep_duration_h','sleep_quality','stress', 'level', '0', '1', '2'])
-
-age = int(input("Ingrese la edad del participante: "))
-sex = int(input("Ingrese el sexo del participante (0 para hombre, 1 para mujer): "))
-height = int(input("Ingrese la altura del participante en centímetros: "))
-person = int(input("Ingrese el número del participante (0 para A, 1 para B): "))
-resting_hr = int(input("Ingrese la frecuencia cardíaca en reposo del participante: "))
-fatigue = int(input("Ingrese el nivel de fatiga del participante (1 para baja, 2 para media, 3 para alta): "))
-mood = int(input("Ingrese el nivel ánimo del participante (1 para bajo, 2 para medio, 3 para alto): "))
-sleep_duration_h = int(input("Ingrese cuántas horas durmió: "))
-sleep_quality = int(input("Ingrese la calidad del sueño del participante (1 para baja, 2 para media, 3 para alta): "))
-stress = int(input("Ingrese el nivel estrés del participante (1 para bajo, 2 para medio, 3 para alto): "))
+hr_sleep_df = pd.DataFrame(columns=['participant','logId','phaseNo','hrNo','secondsPassed','daySeconds','bpm','resting_hr','age','height','sex','person','fatigue','mood','sleep_duration_h','sleep_quality','stress'])
+hr_sleep_pred_df = pd.DataFrame(columns=['participant','logId','phaseNo','hrNo','secondsPassed','daySeconds','bpm','resting_hr','age','height','sex','person','fatigue','mood','sleep_duration_h','sleep_quality','stress', 'level', '0', '1', '2'])
 
 person_data = {
     "id": 17,
@@ -93,7 +96,13 @@ while True:
                 "age": person_data["age"],
                 "height": person_data["height"],
                 "sex": person_data["sex"],
-                "person": person_data["person"]
+                "person": person_data["person"],
+                "resting_hr": person_data["resting_hr"],
+                "fatigue": person_data["fatigue"],
+                "mood": person_data["mood"],
+                "sleep_duration_h": person_data["sleep_duration_h"],
+                "sleep_quality": person_data["sleep_quality"],
+                "stress": person_data["stress"]
             }
             # Append the received dataframe to the main dataframe
             hr_sleep_df.loc[len(hr_sleep_df)] = new_row
