@@ -3,7 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+datasets/
 data/
+AutogluonModels/
+models/
 
 # C extensions
 *.so
